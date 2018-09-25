@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ "$1" ]
+then
+  git checkout dev
+  #edit
+  git add .
+  git commit -m $1 
+  git checkout prod 
+  git merge dev
+  git commit -m $1
+  git push -u origin prod:master
+  git checkout dev
+else
+	echo コメントを残してください
+fi
+

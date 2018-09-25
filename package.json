@@ -1,0 +1,21 @@
+{
+  "name": "cursedmine",
+  "version": "1.0.0",
+  "description": "Roguelike Game",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify ./src/game.js > ./docs/build/game.js",
+    "upload": "npm-run-all git:*",
+    "git:checkout-prod": "git checkout prod",
+    "git:merge-dev": "git merge dev",
+    "git:push": "git push -u origin prod:master",
+    "git:checkout-dev": "git checkout dev"
+  },
+  "author": "awagakan",
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "npm-run-all": "^4.1.1"
+  }
+}
