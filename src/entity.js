@@ -88,14 +88,13 @@ var Entity = function (properties) {
 
 	//that.tryMove = function(x, y, z, map) {
 	that.tryMove = function(x, y, z) {
-		var map = that.getMap();
-		var player = map.getPlayer();
-		var tile = map.getTile(x, y, that.getZ());
-		var target = map.getEntityAt(x, y, that.getZ());
-
+    var map = that.getMap();
+	  var player = map.getPlayer();
 		//if (player.getZ() === that.getZ()) { 
 		var pZ = player.getZ();
 		if (_.contains([pZ-1, pZ, pZ+1], that.getZ())) { //プレイヤーの上下一階までを動かす 
+		  var tile = map.getTile(x, y, that.getZ());
+		  var target = map.getEntityAt(x, y, that.getZ());
 		  if (z < that.getZ()) {
 		  	//if (tile != game.stairsUpTile) {
 		  	if (tile.getName() !== 'stairsUpTile') {

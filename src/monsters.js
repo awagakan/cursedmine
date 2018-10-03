@@ -26,7 +26,7 @@ var Monsters = function (depth) {
 		exp: 1,
 		tasks: ['hunt', 'wander'],
 		mixins: [Mixins.TaskActor,Mixins.Attacker, Mixins.Destructible,
-			       Mixins.Sight, Mixins.CorpseDropper, Mixins.FungusActor]
+			       Mixins.Sight, Mixins.CorpseDropper]
 
 	});
 
@@ -41,7 +41,7 @@ var Monsters = function (depth) {
 		exp: 2,
 		tasks: ['hunt', 'wander'],
 		mixins: [Mixins.TaskActor,Mixins.Attacker, Mixins.Destructible,
-			       Mixins.Sight, Mixins.CorpseDropper, Mixins.FungusActor]
+			       Mixins.Sight, Mixins.CorpseDropper]
 	});
 
   that.Repository.define('OilBeetle', {

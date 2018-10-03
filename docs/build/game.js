@@ -13,9 +13,9 @@ var Builder = function (width, height, depth) {
 
 	var init = function () {
 		for (var z = 0; z < depth; z++) {
-			//tiles[z] = that.generateLevel.cellular();
+			tiles[z] = that.generateLevel.cellular();
 			//tiles[z] = that.generateLevel.digger();
-			tiles[z] = that.generateLevel.rogue();
+			//tiles[z] = that.generateLevel.rogue();
 			regions[z] = new Array(width);
 			for (var x = 0; x < width; x++) {
 				regions[z][x] = new Array(height);
@@ -747,14 +747,13 @@ var Entity = function (properties) {
 
 	//that.tryMove = function(x, y, z, map) {
 	that.tryMove = function(x, y, z) {
-		var map = that.getMap();
-		var player = map.getPlayer();
-		var tile = map.getTile(x, y, that.getZ());
-		var target = map.getEntityAt(x, y, that.getZ());
-
+    var map = that.getMap();
+	  var player = map.getPlayer();
 		//if (player.getZ() === that.getZ()) { 
 		var pZ = player.getZ();
 		if (_.contains([pZ-1, pZ, pZ+1], that.getZ())) { //プレイヤーの上下一階までを動かす 
+		  var tile = map.getTile(x, y, that.getZ());
+		  var target = map.getEntityAt(x, y, that.getZ());
 		  if (z < that.getZ()) {
 		  	//if (tile != game.stairsUpTile) {
 		  	if (tile.getName() !== 'stairsUpTile') {
@@ -903,8 +902,8 @@ var EntityMixins = (function (){
 				}
 				this.acting = true;
 				this.addTurnHunger();
-				this.addTurnHeal();
-				this.levelUp();
+				//this.addTurnHeal();
+				//this.levelUp();
 				if (!this.isAlive()) {
 					game.Screen.playScreen.setGameEnded(true);
 				}
@@ -1495,42 +1494,42 @@ var EntityMixins = (function (){
       }
 
 			var target = player; 
-			var stairs = null;
-			if (this.getZ() > player.getZ()) {
-			  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
-				stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('UpStairs');
-				});
-				
-			} else 
-			if (this.getZ() < player.getZ()) {
-			  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
-				stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('DownStairs');
-				});
-			}
-      if (stairs) {
-				target = stairs;
-			}
-			
-			if (target !== player) {
-				//階段上にいる場合に階層移動
-				var tile = map.getTile(this.getX(), this.getY(), this.getZ()); 
-				if (tile.getName() === "stairsDownTile") {
-					this.tryMove(this.getX(), this.getY(), this.getZ()+1);
-				} else 
-				if (tile.getName() === "stairsUpTile") {
-					this.tryMove(this.getX(), this.getY(), this.getZ()-1);
-				}
-				//階段のとなりにいる場合に階段上に移動
-				var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), 1);
-				var stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('Stairs');
-				});
-				if (stairs) {
-					this.tryMove(stairs.getX(), stairs.getY(), stairs.getZ());
-				}
-			}
+			//var stairs = null;
+			//if (this.getZ() > player.getZ()) {
+			//  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
+			//	stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('UpStairs');
+			//	});
+			//	
+			//} else 
+			//if (this.getZ() < player.getZ()) {
+			//  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
+			//	stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('DownStairs');
+			//	});
+			//}
+      //if (stairs) {
+			//	target = stairs;
+			//}
+			//
+			//if (target !== player) {
+			//	//階段上にいる場合に階層移動
+			//	var tile = map.getTile(this.getX(), this.getY(), this.getZ()); 
+			//	if (tile.getName() === "stairsDownTile") {
+			//		this.tryMove(this.getX(), this.getY(), this.getZ()+1);
+			//	} else 
+			//	if (tile.getName() === "stairsUpTile") {
+			//		this.tryMove(this.getX(), this.getY(), this.getZ()-1);
+			//	}
+			//	//階段のとなりにいる場合に階段上に移動
+			//	var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), 1);
+			//	var stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('Stairs');
+			//	});
+			//	if (stairs) {
+			//		this.tryMove(stairs.getX(), stairs.getY(), stairs.getZ());
+			//	}
+			//}
 
       var source = this;
       var z = source.getZ();
@@ -1761,32 +1760,29 @@ var Game = (function () {
 	var Screen = require('./screens').Screen;
 	var Glyph  = require('./glyph').Glyph;
 	var Tile   = require('./tile').Tile;
-	//var Mixins = require('./entities').Mixins;
 	var Mixins = require('./entitymixins').EntityMixins;
 	var Monsters = require('./monsters').Monsters;
 	var Dice = require('./dice').Dice();
 	var currentScreen = null;
 	var message = "";
 
-	var world = {}; //共有のオブジェクトやプロパティを格納するオブジェクトにする（thatをworldに置き換える）
-
   var dom = {};
+  that.defBackground = "#1C1C1C";
   
 	that.display = null;
   that.Screen = Screen(that);
 
-	//プレイヤーテンプレート
 	that.PlayerTemplate = {
 		character: '@',
 		foreground: 'white',
-		background: 'black',
+		background: that.defBackground,
 		maxHp: 10,
 		attackValue: 3,
 		defenseValue: 3,
 		damage: Dice.xdx(1, 2),
 		ac: 9,
-		speed: 110,
-		sightRadius: 20, //6, //5,//10, //6,
+		//speed: 110,
+		sightRadius: 6, //20, //6, //5,//10, //6,
 		healCount: 15,
 		mixins: [Mixins.PlayerActor(that),
 		         Mixins.Attacker, Mixins.Destructible,
@@ -1794,25 +1790,15 @@ var Game = (function () {
 		         Mixins.Sight, Mixins.MessageRecipient,
 		         Mixins.Equipper]
 	}
-
-	//that.monsters = Monsters(that);
 	
 	that.map = Map;
 
-	that.screenWidth = 75; //80;
-	that.screenHeight = 35;//42; //40; //24;
+	that.screenWidth = 36;//32; //75; //80;
+	that.screenHeight = 16;//16; //35;//42; //40; //24;
 
 	that.getScreenWidth  = function () { return that.screenWidth; }
 	that.getScreenHeight = function () { return that.screenHeight; }
-
-	//var getTileSet = function () {
-	//	var tileSet = document.createElement("img");
-	//	tileSet.src = "../igame/tile_16x16.png";
-
-	//	var options = {
-	//		layout: "tile",
-	//		bg: 'transparent"
-			
+				
 	that.init = function(tileSet) {
     var tileSet = document.getElementById('tileSet'); 
    
@@ -1820,7 +1806,7 @@ var Game = (function () {
 		var th = 15;
     var options = {
         layout: "tile",
-        bg: "#1C1C1C", //"#222",//"black",
+        bg: that.defBackground, //"#222",//"black",
         tileWidth: tw,
         tileHeight: th,
         tileSet: tileSet ,
@@ -1869,16 +1855,16 @@ var Game = (function () {
 
 		//var options2 = {bg: "#1C1C1C", width: 125, height: 2, fontSize: 18};
 		//var options3 = {bg: "#1C1C1C", width: 125, height: that.screenHeight, fontSize: 18};
-		var options2 = {bg: "#1C1C1C", width: 80, height: 2, /*spacing: 1.2,*/ fontSize: 18};
-		var options3 = {bg: "#1C1C1C", width: 80, height: 21, /*spacing: 1.2,*/ fontSize: 18};
+		var options2 = {bg: that.defBackground, width: 80, height: 2, /*spacing: 1.2,*/ fontSize: 18};
+		var options3 = {bg: that.defBackground, width: 80, height: 21, /*spacing: 1.2,*/ fontSize: 18};
 		//var options2 = {bg: "#1C1C1C", width: 62, height: 2, fontFamily: "Nico Moji", spacing: 1.2, fontSize: 18};
 		//var options3 = {bg: "#1C1C1C", width: 62, height: 20, fontFamily: "Nico Moji", spacing: 1.2, fontSize: 18};
 
     //that.display = new ROT.Display({width: that.screenWidth, height: that.screenHeight+2});
 		that.display = {};
     that.display.message = new ROT.Display(options2);
-    that.display.main = new ROT.Display(options);
-    //that.display.main = new ROT.Display({width: that.screenWidth, height: that.screenHeight+2});
+    //that.display.main = new ROT.Display(options);
+    that.display.main = new ROT.Display({fontSize: 32, bg: that.defBackground, width: that.screenWidth, height: that.screenHeight+2});
     that.display.menu = new ROT.Display(options3);
     that.display.sub = new ROT.Display(options2);
 		
@@ -1890,9 +1876,7 @@ var Game = (function () {
 	    });
 
     }
-	  // Bind keyboard input events
 	  bindEventToScreen('keydown');
-	  //bindEventToScreen('keyup');
 	  bindEventToScreen('keypress');
 
     dom.message = document.body.appendChild(that.getDisplay("message").getContainer());
@@ -1912,7 +1896,7 @@ var Game = (function () {
 	};
   
 	that.refresh = function () {
-		//that.getDisplay().clear();
+		that.getDisplay().clear();
 		that.getDisplay("message").clear();
 		that.getDisplay("menu").clear();
 		that.getDisplay("sub").clear();
@@ -1958,22 +1942,6 @@ Game.init();
 
 
 
-
-window.onload = function() {
-  // Check if rot.js can work on this browser
-  if (!ROT.isSupported()) {
-    alert("The rot.js library isn't supported by your browser.");
-  } else {
-    
-
-    //Game.init(tileSet);
-
-    // Add the container to our HTML page
-    //document.body.appendChild(Game.getDisplay().getContainer());
-    // Load the start screen
-    //Game.switchScreen(Game.Screen.startScreen);
-  }
-}
 
 
 },{"./dice":3,"./entitymixins":6,"./glyph":11,"./monsters":17,"./screens":19,"./tile":20}],11:[function(require,module,exports){
@@ -2459,7 +2427,7 @@ var Map = function (tiles, player) {
 				  that.addItemAtRandomPosition(Items().Repository.createRandom(), z);
 				} else
 				if (_.contains([11,12], Dice.xdx(1, 12)())) {
-				  that.addEquipmentAtRandomPosition(Equipments().Repository.createRandom(), z);
+				//  that.addEquipmentAtRandomPosition(Equipments().Repository.createRandom(), z);
 				}
 	    }
 		}
@@ -3075,7 +3043,7 @@ var Monsters = function (depth) {
 		exp: 1,
 		tasks: ['hunt', 'wander'],
 		mixins: [Mixins.TaskActor,Mixins.Attacker, Mixins.Destructible,
-			       Mixins.Sight, Mixins.CorpseDropper, Mixins.FungusActor]
+			       Mixins.Sight, Mixins.CorpseDropper]
 
 	});
 
@@ -3090,7 +3058,7 @@ var Monsters = function (depth) {
 		exp: 2,
 		tasks: ['hunt', 'wander'],
 		mixins: [Mixins.TaskActor,Mixins.Attacker, Mixins.Destructible,
-			       Mixins.Sight, Mixins.CorpseDropper, Mixins.FungusActor]
+			       Mixins.Sight, Mixins.CorpseDropper]
 	});
 
   that.Repository.define('OilBeetle', {
@@ -3690,7 +3658,7 @@ var Screen = function (game) {
 					player.getSightRadius(),
 					function(x, y, radius, visibility) {
 						visibleCells[x + "," + y] = true;
-					  map.setExplored(x, y, currentDepth, true);
+					  //map.setExplored(x, y, currentDepth, true);
 						//memorizedCells[x + "," + y + "," + currentDepth] = map.getTile(x, y, currentDepth);
 						for (var i = 0; i < 3; i++) {
 						  var diff = ROT.DIRS[8][i*2];
@@ -3699,18 +3667,19 @@ var Screen = function (game) {
 							var tile = map.getTile(dx, dy, currentDepth);
 							if (tile.getName() === 'wallTile') {
 						    visibleCells[dx + "," + dy] = true;
-							  map.setExplored(dx, dy, currentDepth, true);
+							  //map.setExplored(dx, dy, currentDepth, true);
 						    //memorizedCells[dx + "," + dy + "," + currentDepth] = map.getTile(dx, dy, currentDepth);
 							}
 					  }	
 					});
 
-			//描画のスピードアップのため画面のクリアは階層移動時のみ行う
-			var playerTile = map.getTile(player.getX(), player.getY(), player.getZ()); 
-			if (['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) {
-			  game.getDisplay().clear();	
-			}
-
+			////描画のスピードアップのため画面のクリアは階層移動時のみ行う
+			//var playerTile = map.getTile(player.getX(), player.getY(), player.getZ()); 
+			//if (['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) {
+			//  game.getDisplay().clear();	
+			//}
+			//game.getDisplay().clear();	
+      
 			var z = player.getZ();
 			var playerX = player.getX();
 			var playerY = player.getY();
@@ -3718,20 +3687,16 @@ var Screen = function (game) {
 			for (var x = topLeftX; x < topLeftX + screenWidth; x++) {
 				for (var y = topLeftY; y < topLeftY + screenHeight; y++) {
 					if (filter(x, y, z)) {
-			    //if ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
-					//  ||
-					//   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
-					//    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1))) {
 					  var glyph = map.getTile(x, y, z);
-					  if (map.isExplored(x, y, z)) {
+					  //if (map.isExplored(x, y, z)) {
 					    //壁のグラフィック変更
 					    var chr = glyph.getChar();
 					    //if (map.getTile(x, y, player.getZ()) === game.wallTile) {
-					    if (map.getTile(x, y, z).getName() === 'wallTile') {
-					  	  //chr = map.getWallChr(x, y, z);
-					  	  chr = map.getPartitionChr(x, y, z);
-					    }
+					    //if (map.getTile(x, y, z).getName() === 'wallTile') {
+					  	//  chr = map.getPartitionChr(x, y, z);
+					    //}
 					  	var foreground = glyph.getForeground();
+              var background = glyph.getBackground();
 
 					  	//if (visibleCells[x + ',' + y]) {
 					  	if (visibleCells[x + ',' + y] || map.getMemorizedCell(x,y,z)) {
@@ -3753,6 +3718,12 @@ var Screen = function (game) {
 					  		foreground = glyph.getForeground();
 					  	} else {
 					  		//foreground = 'darkGray';
+                var arrColorF = ROT.Color.fromString(foreground);
+                    arrColorF = ROT.Color.multiply([100,100,100], arrColorF);
+                foreground = ROT.Color.toRGB(arrColorF); 
+                //var arrColorB = ROT.Color.fromString(background);
+                //    arrColorB = ROT.Color.multiply([100,100,100], arrColorB);
+                //background = ROT.Color.toRGB(arrColorB); 
 					  		//glyph = map.getMemorizedCell(x, y, z);
 					  		//chr = glyph.getChar();
 					      //if (map.getTile(x, y, z).getName() === 'wallTile') {
@@ -3766,10 +3737,10 @@ var Screen = function (game) {
 					  	  y - topLeftY,
 					      chr, //glyph.getChar(),
 					  	  foreground, //glyph.getForeground(),
-					  	  glyph.getBackground()
+					  	  background 
 					    );
 					  }
-			    }
+			    //}
 				}
 			}
 		}
@@ -3827,9 +3798,9 @@ var Screen = function (game) {
     that.enter = function() { 
 			var displayDom = game.getDisplayDom("main");
 			displayDom.style.display = "";
-			var width  = game.getScreenWidth(); //100; 
-			var height = game.getScreenHeight(); //48;
-			var depth = 22;//10;
+			var width  = 100; //game.getScreenWidth(); //100; 
+			var height = 48; //game.getScreenHeight(); //48;
+			var depth = 6; //22;//10;
 
 			//TODO: タイルとプレイヤー(あとエンティティ)の情報はサーバーから受け取ることにする
 			//var tiles = Builder(game, width, height, depth).getTiles();
@@ -3881,12 +3852,13 @@ var Screen = function (game) {
       var playerX = player.getX();
 			var playerY = player.getY();
 			var playerSightRadius = player.getSightRadius();
-			draw(display, function (x, y, z) {
-        return ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
-					  ||
-					   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
-					    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1)));
-			});
+      draw(display);
+			//draw(display, function (x, y, z) {
+      //  return ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
+			//		  ||
+			//		   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
+			//		    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1)));
+			//});
 
 			//var screenWidth = game.getScreenWidth();
 			//var screenHeight = game.getScreenHeight();
@@ -4620,10 +4592,10 @@ var TileData = function()  {
 	//壁
   that.wallTile = Tile({
 		name: 'wallTile',
-		character: ''
+		character: '#'
 		,foreground: 'goldenrod'
 		,walkable: false
-		,diggable: false //true 
+		,diggable: true 
 	});	
 	//扉
 	that.doorTile = Tile({

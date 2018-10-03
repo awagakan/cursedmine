@@ -6,32 +6,29 @@ var Game = (function () {
 	var Screen = require('./screens').Screen;
 	var Glyph  = require('./glyph').Glyph;
 	var Tile   = require('./tile').Tile;
-	//var Mixins = require('./entities').Mixins;
 	var Mixins = require('./entitymixins').EntityMixins;
 	var Monsters = require('./monsters').Monsters;
 	var Dice = require('./dice').Dice();
 	var currentScreen = null;
 	var message = "";
 
-	var world = {}; //共有のオブジェクトやプロパティを格納するオブジェクトにする（thatをworldに置き換える）
-
   var dom = {};
+  that.defBackground = "#1C1C1C";
   
 	that.display = null;
   that.Screen = Screen(that);
 
-	//プレイヤーテンプレート
 	that.PlayerTemplate = {
 		character: '@',
 		foreground: 'white',
-		background: 'black',
+		background: that.defBackground,
 		maxHp: 10,
 		attackValue: 3,
 		defenseValue: 3,
 		damage: Dice.xdx(1, 2),
 		ac: 9,
-		speed: 110,
-		sightRadius: 20, //6, //5,//10, //6,
+		//speed: 110,
+		sightRadius: 6, //20, //6, //5,//10, //6,
 		healCount: 15,
 		mixins: [Mixins.PlayerActor(that),
 		         Mixins.Attacker, Mixins.Destructible,
@@ -39,25 +36,15 @@ var Game = (function () {
 		         Mixins.Sight, Mixins.MessageRecipient,
 		         Mixins.Equipper]
 	}
-
-	//that.monsters = Monsters(that);
 	
 	that.map = Map;
 
-	that.screenWidth = 75; //80;
-	that.screenHeight = 35;//42; //40; //24;
+	that.screenWidth = 36;//32; //75; //80;
+	that.screenHeight = 16;//16; //35;//42; //40; //24;
 
 	that.getScreenWidth  = function () { return that.screenWidth; }
 	that.getScreenHeight = function () { return that.screenHeight; }
-
-	//var getTileSet = function () {
-	//	var tileSet = document.createElement("img");
-	//	tileSet.src = "../igame/tile_16x16.png";
-
-	//	var options = {
-	//		layout: "tile",
-	//		bg: 'transparent"
-			
+				
 	that.init = function(tileSet) {
     var tileSet = document.getElementById('tileSet'); 
    
@@ -65,7 +52,7 @@ var Game = (function () {
 		var th = 15;
     var options = {
         layout: "tile",
-        bg: "#1C1C1C", //"#222",//"black",
+        bg: that.defBackground, //"#222",//"black",
         tileWidth: tw,
         tileHeight: th,
         tileSet: tileSet ,
@@ -114,16 +101,16 @@ var Game = (function () {
 
 		//var options2 = {bg: "#1C1C1C", width: 125, height: 2, fontSize: 18};
 		//var options3 = {bg: "#1C1C1C", width: 125, height: that.screenHeight, fontSize: 18};
-		var options2 = {bg: "#1C1C1C", width: 80, height: 2, /*spacing: 1.2,*/ fontSize: 18};
-		var options3 = {bg: "#1C1C1C", width: 80, height: 21, /*spacing: 1.2,*/ fontSize: 18};
+		var options2 = {bg: that.defBackground, width: 80, height: 2, /*spacing: 1.2,*/ fontSize: 18};
+		var options3 = {bg: that.defBackground, width: 80, height: 21, /*spacing: 1.2,*/ fontSize: 18};
 		//var options2 = {bg: "#1C1C1C", width: 62, height: 2, fontFamily: "Nico Moji", spacing: 1.2, fontSize: 18};
 		//var options3 = {bg: "#1C1C1C", width: 62, height: 20, fontFamily: "Nico Moji", spacing: 1.2, fontSize: 18};
 
     //that.display = new ROT.Display({width: that.screenWidth, height: that.screenHeight+2});
 		that.display = {};
     that.display.message = new ROT.Display(options2);
-    that.display.main = new ROT.Display(options);
-    //that.display.main = new ROT.Display({width: that.screenWidth, height: that.screenHeight+2});
+    //that.display.main = new ROT.Display(options);
+    that.display.main = new ROT.Display({fontSize: 32, bg: that.defBackground, width: that.screenWidth, height: that.screenHeight+2});
     that.display.menu = new ROT.Display(options3);
     that.display.sub = new ROT.Display(options2);
 		
@@ -135,9 +122,7 @@ var Game = (function () {
 	    });
 
     }
-	  // Bind keyboard input events
 	  bindEventToScreen('keydown');
-	  //bindEventToScreen('keyup');
 	  bindEventToScreen('keypress');
 
     dom.message = document.body.appendChild(that.getDisplay("message").getContainer());
@@ -157,7 +142,7 @@ var Game = (function () {
 	};
   
 	that.refresh = function () {
-		//that.getDisplay().clear();
+		that.getDisplay().clear();
 		that.getDisplay("message").clear();
 		that.getDisplay("menu").clear();
 		that.getDisplay("sub").clear();
@@ -203,20 +188,4 @@ Game.init();
 
 
 
-
-window.onload = function() {
-  // Check if rot.js can work on this browser
-  if (!ROT.isSupported()) {
-    alert("The rot.js library isn't supported by your browser.");
-  } else {
-    
-
-    //Game.init(tileSet);
-
-    // Add the container to our HTML page
-    //document.body.appendChild(Game.getDisplay().getContainer());
-    // Load the start screen
-    //Game.switchScreen(Game.Screen.startScreen);
-  }
-}
 

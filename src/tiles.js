@@ -15,10 +15,10 @@ var TileData = function()  {
 	//壁
   that.wallTile = Tile({
 		name: 'wallTile',
-		character: ''
+		character: '#'
 		,foreground: 'goldenrod'
 		,walkable: false
-		,diggable: false //true 
+		,diggable: true 
 	});	
 	//扉
 	that.doorTile = Tile({

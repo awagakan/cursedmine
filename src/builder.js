@@ -12,9 +12,9 @@ var Builder = function (width, height, depth) {
 
 	var init = function () {
 		for (var z = 0; z < depth; z++) {
-			//tiles[z] = that.generateLevel.cellular();
+			tiles[z] = that.generateLevel.cellular();
 			//tiles[z] = that.generateLevel.digger();
-			tiles[z] = that.generateLevel.rogue();
+			//tiles[z] = that.generateLevel.rogue();
 			regions[z] = new Array(width);
 			for (var x = 0; x < width; x++) {
 				regions[z][x] = new Array(height);

@@ -52,8 +52,8 @@ var EntityMixins = (function (){
 				}
 				this.acting = true;
 				this.addTurnHunger();
-				this.addTurnHeal();
-				this.levelUp();
+				//this.addTurnHeal();
+				//this.levelUp();
 				if (!this.isAlive()) {
 					game.Screen.playScreen.setGameEnded(true);
 				}
@@ -644,42 +644,42 @@ var EntityMixins = (function (){
       }
 
 			var target = player; 
-			var stairs = null;
-			if (this.getZ() > player.getZ()) {
-			  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
-				stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('UpStairs');
-				});
-				
-			} else 
-			if (this.getZ() < player.getZ()) {
-			  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
-				stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('DownStairs');
-				});
-			}
-      if (stairs) {
-				target = stairs;
-			}
-			
-			if (target !== player) {
-				//階段上にいる場合に階層移動
-				var tile = map.getTile(this.getX(), this.getY(), this.getZ()); 
-				if (tile.getName() === "stairsDownTile") {
-					this.tryMove(this.getX(), this.getY(), this.getZ()+1);
-				} else 
-				if (tile.getName() === "stairsUpTile") {
-					this.tryMove(this.getX(), this.getY(), this.getZ()-1);
-				}
-				//階段のとなりにいる場合に階段上に移動
-				var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), 1);
-				var stairs = _.find(equipments, function (value, key) {
-					return value.hasMixin('Stairs');
-				});
-				if (stairs) {
-					this.tryMove(stairs.getX(), stairs.getY(), stairs.getZ());
-				}
-			}
+			//var stairs = null;
+			//if (this.getZ() > player.getZ()) {
+			//  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
+			//	stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('UpStairs');
+			//	});
+			//	
+			//} else 
+			//if (this.getZ() < player.getZ()) {
+			//  var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), depthTerritory);
+			//	stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('DownStairs');
+			//	});
+			//}
+      //if (stairs) {
+			//	target = stairs;
+			//}
+			//
+			//if (target !== player) {
+			//	//階段上にいる場合に階層移動
+			//	var tile = map.getTile(this.getX(), this.getY(), this.getZ()); 
+			//	if (tile.getName() === "stairsDownTile") {
+			//		this.tryMove(this.getX(), this.getY(), this.getZ()+1);
+			//	} else 
+			//	if (tile.getName() === "stairsUpTile") {
+			//		this.tryMove(this.getX(), this.getY(), this.getZ()-1);
+			//	}
+			//	//階段のとなりにいる場合に階段上に移動
+			//	var equipments = map.getEquipmentsWithinRadius(this.getX(), this.getY(), this.getZ(), 1);
+			//	var stairs = _.find(equipments, function (value, key) {
+			//		return value.hasMixin('Stairs');
+			//	});
+			//	if (stairs) {
+			//		this.tryMove(stairs.getX(), stairs.getY(), stairs.getZ());
+			//	}
+			//}
 
       var source = this;
       var z = source.getZ();

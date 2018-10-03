@@ -88,7 +88,7 @@ var Map = function (tiles, player) {
 				  that.addItemAtRandomPosition(Items().Repository.createRandom(), z);
 				} else
 				if (_.contains([11,12], Dice.xdx(1, 12)())) {
-				  that.addEquipmentAtRandomPosition(Equipments().Repository.createRandom(), z);
+				//  that.addEquipmentAtRandomPosition(Equipments().Repository.createRandom(), z);
 				}
 	    }
 		}

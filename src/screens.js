@@ -134,7 +134,7 @@ var Screen = function (game) {
 					player.getSightRadius(),
 					function(x, y, radius, visibility) {
 						visibleCells[x + "," + y] = true;
-					  map.setExplored(x, y, currentDepth, true);
+					  //map.setExplored(x, y, currentDepth, true);
 						//memorizedCells[x + "," + y + "," + currentDepth] = map.getTile(x, y, currentDepth);
 						for (var i = 0; i < 3; i++) {
 						  var diff = ROT.DIRS[8][i*2];
@@ -143,18 +143,19 @@ var Screen = function (game) {
 							var tile = map.getTile(dx, dy, currentDepth);
 							if (tile.getName() === 'wallTile') {
 						    visibleCells[dx + "," + dy] = true;
-							  map.setExplored(dx, dy, currentDepth, true);
+							  //map.setExplored(dx, dy, currentDepth, true);
 						    //memorizedCells[dx + "," + dy + "," + currentDepth] = map.getTile(dx, dy, currentDepth);
 							}
 					  }	
 					});
 
-			//描画のスピードアップのため画面のクリアは階層移動時のみ行う
-			var playerTile = map.getTile(player.getX(), player.getY(), player.getZ()); 
-			if (['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) {
-			  game.getDisplay().clear();	
-			}
-
+			////描画のスピードアップのため画面のクリアは階層移動時のみ行う
+			//var playerTile = map.getTile(player.getX(), player.getY(), player.getZ()); 
+			//if (['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) {
+			//  game.getDisplay().clear();	
+			//}
+			//game.getDisplay().clear();	
+      
 			var z = player.getZ();
 			var playerX = player.getX();
 			var playerY = player.getY();
@@ -162,20 +163,16 @@ var Screen = function (game) {
 			for (var x = topLeftX; x < topLeftX + screenWidth; x++) {
 				for (var y = topLeftY; y < topLeftY + screenHeight; y++) {
 					if (filter(x, y, z)) {
-			    //if ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
-					//  ||
-					//   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
-					//    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1))) {
 					  var glyph = map.getTile(x, y, z);
-					  if (map.isExplored(x, y, z)) {
+					  //if (map.isExplored(x, y, z)) {
 					    //壁のグラフィック変更
 					    var chr = glyph.getChar();
 					    //if (map.getTile(x, y, player.getZ()) === game.wallTile) {
-					    if (map.getTile(x, y, z).getName() === 'wallTile') {
-					  	  //chr = map.getWallChr(x, y, z);
-					  	  chr = map.getPartitionChr(x, y, z);
-					    }
+					    //if (map.getTile(x, y, z).getName() === 'wallTile') {
+					  	//  chr = map.getPartitionChr(x, y, z);
+					    //}
 					  	var foreground = glyph.getForeground();
+              var background = glyph.getBackground();
 
 					  	//if (visibleCells[x + ',' + y]) {
 					  	if (visibleCells[x + ',' + y] || map.getMemorizedCell(x,y,z)) {
@@ -197,6 +194,12 @@ var Screen = function (game) {
 					  		foreground = glyph.getForeground();
 					  	} else {
 					  		//foreground = 'darkGray';
+                var arrColorF = ROT.Color.fromString(foreground);
+                    arrColorF = ROT.Color.multiply([100,100,100], arrColorF);
+                foreground = ROT.Color.toRGB(arrColorF); 
+                //var arrColorB = ROT.Color.fromString(background);
+                //    arrColorB = ROT.Color.multiply([100,100,100], arrColorB);
+                //background = ROT.Color.toRGB(arrColorB); 
 					  		//glyph = map.getMemorizedCell(x, y, z);
 					  		//chr = glyph.getChar();
 					      //if (map.getTile(x, y, z).getName() === 'wallTile') {
@@ -210,10 +213,10 @@ var Screen = function (game) {
 					  	  y - topLeftY,
 					      chr, //glyph.getChar(),
 					  	  foreground, //glyph.getForeground(),
-					  	  glyph.getBackground()
+					  	  background 
 					    );
 					  }
-			    }
+			    //}
 				}
 			}
 		}
@@ -271,9 +274,9 @@ var Screen = function (game) {
     that.enter = function() { 
 			var displayDom = game.getDisplayDom("main");
 			displayDom.style.display = "";
-			var width  = game.getScreenWidth(); //100; 
-			var height = game.getScreenHeight(); //48;
-			var depth = 22;//10;
+			var width  = 100; //game.getScreenWidth(); //100; 
+			var height = 48; //game.getScreenHeight(); //48;
+			var depth = 6; //22;//10;
 
 			//TODO: タイルとプレイヤー(あとエンティティ)の情報はサーバーから受け取ることにする
 			//var tiles = Builder(game, width, height, depth).getTiles();
@@ -325,12 +328,13 @@ var Screen = function (game) {
       var playerX = player.getX();
 			var playerY = player.getY();
 			var playerSightRadius = player.getSightRadius();
-			draw(display, function (x, y, z) {
-        return ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
-					  ||
-					   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
-					    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1)));
-			});
+      draw(display);
+			//draw(display, function (x, y, z) {
+      //  return ((['stairsUpTile','stairsDownTile'].indexOf(playerTile.getName()) >= 0) 
+			//		  ||
+			//		   ((x >= playerX-playerSightRadius-1 && x <= playerX+playerSightRadius+1) &&
+			//		    (y >= playerY-playerSightRadius-1 && y <= playerY+playerSightRadius+1)));
+			//});
 
 			//var screenWidth = game.getScreenWidth();
 			//var screenHeight = game.getScreenHeight();
