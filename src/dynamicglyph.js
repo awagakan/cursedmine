@@ -35,6 +35,7 @@ var DynamicGlyph = function (properties) {
 			//17.8.20 test
 	  	if (key != 'init' && key != 'name' && !that.hasOwnProperty(key)) {
 	  		that[key] = mixin[key];
+	  		//that[key] = mixin[key];
 	  	}
 	  }
 	  //mixinの名前を追加

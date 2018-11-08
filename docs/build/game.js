@@ -577,6 +577,7 @@ var DynamicGlyph = function (properties) {
 			//17.8.20 test
 	  	if (key != 'init' && key != 'name' && !that.hasOwnProperty(key)) {
 	  		that[key] = mixin[key];
+	  		//that[key] = mixin[key];
 	  	}
 	  }
 	  //mixinの名前を追加
@@ -1800,10 +1801,11 @@ var Game = (function () {
 	that.getScreenHeight = function () { return that.screenHeight; }
 				
 	that.init = function(tileSet) {
-    var tileSet = document.getElementById('tileSet'); 
+    //var tileSet = document.getElementById('tileSet'); 
+    var tileSet = document.getElementById('tileSet35'); 
    
-		var tw = 15;
-		var th = 15;
+		var tw = 35; //15;
+		var th = 35; //15;
     var options = {
         layout: "tile",
         bg: that.defBackground, //"#222",//"black",
@@ -1863,8 +1865,8 @@ var Game = (function () {
     //that.display = new ROT.Display({width: that.screenWidth, height: that.screenHeight+2});
 		that.display = {};
     that.display.message = new ROT.Display(options2);
-    //that.display.main = new ROT.Display(options);
-    that.display.main = new ROT.Display({fontSize: 32, bg: that.defBackground, width: that.screenWidth, height: that.screenHeight+2});
+    that.display.main = new ROT.Display(options);
+    //that.display.main = new ROT.Display({fontSize: 32, bg: that.defBackground, width: that.screenWidth, height: that.screenHeight+2});
     that.display.menu = new ROT.Display(options3);
     that.display.sub = new ROT.Display(options2);
 		
